@@ -76,7 +76,10 @@ Drop it in, call one function, wire four camera inputs. Done.
 
 * **Engine:** Unreal Engine 5.8
 * **Modules:** one Runtime module (`ShutterMode`, LoadingPhase `PreDefault`)
-* **Platforms:** Win64, Mac, Linux
+* **Platforms:** Win64 — built and verified with `RunUAT BuildPlugin` for this release (Editor,
+  Development and Shipping, zero warnings). Mac and Linux are allow-listed in the `.uplugin` and the
+  code contains nothing platform-specific, but they were not built here and are therefore not
+  claimed as supported.
 * **Dependencies:** `Core`, `CoreUObject`, `Engine`, `InputCore`, `DeveloperSettings`, `RenderCore`.
   No third-party libraries. No `UnrealEd`, no editor-only Slate — it runs in a cooked Shipping build.
 * **Network:** the pause is local and single-player by nature. For network play, switch the pause
