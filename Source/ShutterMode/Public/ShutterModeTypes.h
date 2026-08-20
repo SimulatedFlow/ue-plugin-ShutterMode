@@ -1,4 +1,4 @@
-// Copyright 2026 Simulated Flow. All Rights Reserved.
+// Copyright 2026 Silvan Teufel. All Rights Reserved.
 
 #pragma once
 
@@ -205,10 +205,6 @@ struct SHUTTERMODE_API FShutterModeRestorePoint
 	/** APlayerController::PrimaryActorTick.bTickEvenWhenPaused */
 	UPROPERTY()
 	bool bControllerTickedWhenPaused = false;
-
-	/** APlayerController::bShouldPerformFullTickWhenPaused */
-	UPROPERTY()
-	bool bControllerFullTickWhenPaused = false;
 
 	// ---- Viewport state -------------------------------------------------------------------
 	// SetInputMode() is nothing but a writer for these four values, so recording them here is
