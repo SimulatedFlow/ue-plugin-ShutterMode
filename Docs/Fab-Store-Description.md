@@ -64,6 +64,11 @@ Drop it in, call one function, wire four camera inputs. Done.
   `.Filter`, `.Guides`.
 * **Project settings** for every default: leash, speeds, pause, collision channel, output folder,
   resolution multiplier, filter list, guide flags.
+* **A demo map that actually demonstrates it.** `L_ShutterModeDemo` is a plaza at last light,
+  deliberately staggered in depth (subject at 6 m, archway at 27 m, skyline at 75 m) so f/1.4 and
+  f/8 look like two different photographs. It comes with **six ready-made filters** — Neutral,
+  Noir, Sepia, Cyberpunk, Warm Film, Bleach Bypass — a clickable demo HUD, and a demo Blueprint
+  whose eight functions are one library call each, ready to copy into your own player controller.
 
 ---
 
@@ -105,6 +110,9 @@ that the difficult part is putting the game back together afterwards.
   pause switch off and use the camera, filters, guides and capture without it.
 * **Filters are colour grading plus an optional post-process material** — not a shader construction
   kit.
+* **Six filters ship, not a filter library.** They are starting points, and they have to be added to
+  the wheel once in the project settings — the plugin does not write to your project config.
 * Depth of field can only show what your scene gives it: if nothing in frame is at a different
-  distance, no aperture value will look like anything.
+  distance — or if the lens is very wide, which is what a 70° field of view is — no aperture value
+  will look like anything. The documentation says so plainly and the demo map is built to prove it.
 * Photos are written as PNG. HDR `.exr` capture is not wired up.

@@ -89,6 +89,25 @@ ShutterMode.Enter
 The view should detach from your character. `ShutterMode.Exit` puts it back. If the command is not
 found, the module did not load — check that the plugin is enabled and that the build succeeded.
 
+### The demo map
+
+Everything ships under one pack folder, `/ShutterMode/ShutterMode/`. Turn on
+**Content Browser > Settings > Show Plugin Content** to see it.
+
+| Asset | What it is |
+|---|---|
+| `Maps/L_ShutterModeDemo` | A small plaza at last light, deliberately **staggered in depth** — a subject 6 m out, an archway at 27 m, a colonnade, a skyline at 75 m. Depth of field can only show what the level gives it, so the demo gives it something. |
+| `Filters/DA_Shutter_{Neutral,Noir,Sepia,Cyberpunk,WarmFilm,BleachBypass}` | The six shipped looks. Already listed in the demo project's **Project Settings > Plugins > ShutterMode > Filters**. |
+| `Blueprints/BP_ShutterModeDemo` | The demo director. `BeginPlay` puts the HUD on screen and sets the input mode; the eight functions on it (`TogglePhotoMode`, `EnterPhotoMode`, `ExitPhotoMode`, `NextFilter`, `ApertureWideOpen`, `ApertureStoppedDown`, `ToggleGuides`, `TakePhoto`) are one library call each — copy them into your own player controller. |
+| `UI/WBP_ShutterModeDemoHUD` | Seven clickable buttons: *Enter Photo Mode · Filter > · f/1.4 · f/8 · Guides · Capture · Exit*. |
+| `Materials/M_ShutterSurface` + `MI_Shutter_*` | Plain grading-free surfaces for the demo geometry. Nothing here is needed by the plugin itself. |
+
+The demo HUD switches the photo camera to a **40° (≈50 mm-equivalent) lens** when it opens photo
+mode. That is not decoration: the project default of 70° is a 26 mm-equivalent wide angle, and a
+26 mm lens is past its hyperfocal distance almost everywhere, so *no* f-stop can blur a background
+with it. If your aperture slider looks like it does nothing, the focal length is the reason —
+see [section 6](#6-depth-of-field).
+
 ---
 
 ## 3. Quick start — five minutes
@@ -142,10 +161,13 @@ accumulated and applied once per tick.
 
 ### Step 3 — Add filters
 
-The filter wheel is a list in the project settings and starts **empty**; a fresh install shows
-`None` as the filter name until you fill it. Create your looks as data assets — see
-[section 5](#5-writing-your-own-filters) — and add them under
-**Project Settings > Plugins > ShutterMode > Filters**. The list order *is* the wheel order.
+The filter wheel is a list in the project settings. Six ready-made filters ship with the plugin in
+`/ShutterMode/ShutterMode/Filters/` — **Neutral**, **Noir**, **Sepia**, **Cyberpunk**,
+**Warm Film** and **Bleach Bypass** — so add them under
+**Project Settings > Plugins > ShutterMode > Filters** and the wheel works immediately. The wheel
+starts **empty** in a fresh project: the plugin never writes to your `DefaultGame.ini` by itself.
+The list order *is* the wheel order, and your own looks go in the same list — see
+[section 5](#5-writing-your-own-filters).
 
 ### Step 4 — Take the picture
 
@@ -267,9 +289,27 @@ without which nothing happens at all.
 * `Sensor Width` (project settings, default **36 mm** full-frame) decides how strong the defocus is
   for a given f-stop. **24.89** gives you Super 35.
 
-If the difference between f/1.4 and f/16 is not visible in your scene, the scene has nothing at
-different depths. Depth of field can only show what the level gives it — build your photo spots with
-something near the camera, something in the middle and something far away.
+### If the aperture "does nothing", read this
+
+Two causes, in order of likelihood.
+
+**1. The lens is too wide.** `FieldOfView` *is* the focal length: at the default 70° on a 36 mm
+sensor you are shooting a **26 mm** lens, whose hyperfocal distance at f/1.4 is about 16 m. Focus
+past that and everything from 8 m to infinity is sharp — correctly, physically, and no aperture
+value changes it. Narrow the field of view and the same scene falls apart beautifully:
+
+| Field of view | Equivalent lens | Background blur at f/1.4, subject at 6 m |
+|---|---|---|
+| 70° | 26 mm | barely visible |
+| **40°** | **50 mm** | strong — what the demo map uses |
+| 25° | 82 mm | extreme |
+
+`Set Field Of View` (or `Zoom By` on the camera) is therefore part of the depth-of-field control,
+not a separate feature. A larger `Sensor Width` has the same effect and is the other knob.
+
+**2. The scene has nothing at different depths.** Depth of field can only show what the level gives
+it — build your photo spots with something near the camera, something in the middle and something
+far away. `L_ShutterModeDemo` is laid out exactly that way.
 
 ---
 
@@ -641,8 +681,11 @@ world.
 * **Depth of field can only show what your scene gives it.** If nothing in frame is at a different
   distance, no aperture value will look like anything.
 * **PNG only.** HDR `.exr` capture is not wired up.
-* **No filter assets are shipped.** The filter wheel is yours to fill — see
-  [section 5](#5-writing-your-own-filters) for six recipes to start from.
+* **Six filters ship, not a filter library.** Neutral, Noir, Sepia, Cyberpunk, Warm Film and
+  Bleach Bypass are included as data assets and are meant as starting points; anything beyond that
+  is yours to author — see [section 5](#5-writing-your-own-filters). They also have to be added to
+  the wheel once (**Project Settings > Plugins > ShutterMode > Filters**), because the plugin does
+  not write to your project config on install.
 * **Desktop platforms only** (Win64 / Mac / Linux). Nothing in the code is desktop-specific, but
   console platforms are untested and unsupported.
 
@@ -654,9 +697,10 @@ world.
 |---|---|
 | Camera does not move while paused | The input binding is not marked to fire during a pause. Enhanced Input: **Trigger When Paused** on the Input Action. Legacy: `bExecuteWhenPaused`. |
 | The whole view is frozen, but the camera reports moving | Something else took the view target after photo mode started. |
-| Aperture does nothing | Nothing in frame is at a different depth, or `r.DepthOfFieldQuality` is `0`. |
+| Aperture does nothing | The lens is too wide (70° = 26 mm ⇒ almost everything is inside the hyperfocal range), nothing in frame is at a different depth, or `r.DepthOfFieldQuality` is `0`. See [section 6](#6-depth-of-field). |
 | Guides appear in the saved photo | `Capture Frame Delay` is too low for your frame pacing — raise it to `3`. |
-| Filter name shows `None` / the wheel is empty | No filter assets are listed in **Project Settings > Plugins > ShutterMode > Filters**. The plugin ships none by design. |
+| Filter name shows `None` / the wheel is empty | No filter assets are listed in **Project Settings > Plugins > ShutterMode > Filters**. Add the six that ship in `/ShutterMode/ShutterMode/Filters/`, or your own. |
+| The demo map is dark / the buttons do nothing | The demo needs the ShutterMode plugin content enabled (**Content Browser > Settings > Show Plugin Content**). Open `/ShutterMode/ShutterMode/Maps/L_ShutterModeDemo` and press Play. |
 | Photo mode leaves the game paused | Something else paused it *before* photo mode was opened. That pause is deliberately not ours to lift. |
 | Nothing happens on `Enter Photo Mode` | No player controller yet, or the call ran on a non-game world (the subsystem only exists in Game and PIE worlds). |
 | Camera will not fly far enough | The leash: raise **Max Distance From Subject** or switch **Leash Enabled** off. |

@@ -36,6 +36,16 @@ there is nothing to collide with your project's input setup.
 | `UShutterModeStatics` | One-node Blueprint shortcuts. |
 | `FShutterModeState` | The complete look of one photo, copyable and saveable. |
 
+## Demo content
+
+Everything sits under one pack folder, `/ShutterMode/ShutterMode/` (enable
+**Content Browser > Settings > Show Plugin Content**):
+
+* `Maps/L_ShutterModeDemo` — a plaza at last light, staggered in depth so the aperture is visible.
+* `Filters/DA_Shutter_{Neutral,Noir,Sepia,Cyberpunk,WarmFilm,BleachBypass}` — six ready-made looks.
+* `Blueprints/BP_ShutterModeDemo` — eight functions, one library call each, ready to copy.
+* `UI/WBP_ShutterModeDemoHUD` — clickable *Enter · Filter · f/1.4 · f/8 · Guides · Capture · Exit*.
+
 ## Console commands
 
 `ShutterMode.Enter` · `ShutterMode.Exit` · `ShutterMode.Capture [n]` · `ShutterMode.Filter [i]` ·
@@ -53,7 +63,7 @@ Unreal Engine 5.8 · Win64 / Mac / Linux · one Runtime module · no third-party
 
 ---
 
-© 2026 Simulated Flow. All Rights Reserved.
+© 2026 Silvan Teufel. All Rights Reserved.
 
 <!-- SF-STORE-BLOCK:BEGIN -->
 ## 🛒 Source-available — see before you buy
@@ -71,5 +81,5 @@ _This plugin does not have its own Fab listing yet — the store link above is w
 
 👉 **[Get the free pack](https://silvan.teufel-engineering.com/newsletter/plugins/?q=gh)**
 
-_© 2026 Simulated Flow. All rights reserved._
+_© 2026 Silvan Teufel. All rights reserved._
 <!-- SF-STORE-BLOCK:END -->
